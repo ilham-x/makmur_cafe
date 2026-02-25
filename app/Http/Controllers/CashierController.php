@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Support\Facades\Auth;
 use App\Models\Cashier;
 use Illuminate\Http\Request;
 
@@ -12,7 +12,8 @@ class CashierController extends Controller
      */
     public function index()
     {
-        return view("cashier.dashboard");
+        $ire = Auth::user();
+        return view("cashier.dashboard",compact("ire"));
     }
 
     /**

@@ -132,6 +132,11 @@ input, textarea {
        class="{{ request()->routeIs('admin.kasir.*') ? 'active' : '' }}">
        Kasir
     </a>
+      <form action="{{ route('logout') }}" method="post">
+        @csrf
+        <button type="submit" class="{{ request()->routeIs('logout') ? 'active' : '' }}">Logout</button>
+      </form>
+   
   </nav>
 </aside>
 
