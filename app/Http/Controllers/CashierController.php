@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Cashier;
+use App\Models\Produk;
 use Illuminate\Http\Request;
 
 class CashierController extends Controller
@@ -13,7 +14,8 @@ class CashierController extends Controller
     public function index()
     {
         $ire = Auth::user();
-        return view("cashier.dashboard",compact("ire"));
+        $anjlok=Produk::all();
+        return view("cashier.dashboard",compact("ire","anjlok"));
     }
 
     /**
@@ -63,4 +65,49 @@ class CashierController extends Controller
     {
         //
     }
+    public function addToCart(Request $request)
+{
+    $cart = session()->get('cart', []);
+
+    $id = $request->produk_id;
+
+    if(isset($cart[$id])){
+        $cart[$id]['qty']++;
+    } else {
+        $cart[$id] = [
+            "produk_id" => $id,
+            "nama" => $request->nama,
+            "harga" => $request->harga,
+            "qty" => 1
+        ];
+    }
+
+    session()->put('cart', $cart);
+
+    return back();
+}
+public function updateCart(Request $request)
+{
+    $cart = session()->get('cart', []);
+
+    if(isset($cart[$request->produk_id])){
+        $cart[$request->produk_id]['qty'] += $request->type == 'plus' ? 1 : -1;
+
+        if($cart[$request->produk_id]['qty'] <= 0){
+            unset($cart[$request->produk_id]);
+        }
+    }
+
+    session()->put('cart', $cart);
+
+    return response()->json(['success'=>true]);
+}
+public function deleteCart(Request $request)
+{
+    $cart = session()->get('cart', []);
+    unset($cart[$request->produk_id]);
+    session()->put('cart', $cart);
+
+    return response()->json(['success'=>true]);
+}
 }

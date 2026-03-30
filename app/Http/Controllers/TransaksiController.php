@@ -1,12 +1,28 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Xendit\Xendit;
 use App\Http\Controllers\Controller;
 use App\Models\Transaksi;
 
 class TransaksiController extends Controller
 {
+    
+
+public function createInvoice()
+{
+    Xendit::setApiKey(config('services.xendit.secret_key'));
+
+    $params = [
+        'external_id' => 'order-'.time(),
+        'amount' => 20000,
+        'description' => 'Pembayaran Cafe'
+    ];
+
+    $invoice = \Xendit\Invoice::create($params);
+
+    return redirect($invoice['invoice_url']);
+}
     public function index()
     {
         $transaksis = Transaksi::with('pesanan.meja')

@@ -11,11 +11,22 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pesanans', function (Blueprint $table) {
-            $table->id();
-            
-            $table->timestamps();
-        });
+       Schema::create('pesanans', function (Blueprint $table) {
+    $table->id();
+    $table->string('kode_pesanan');
+    $table->string('nama_pelanggan')->nullable();
+    $table->integer('nomor_meja')->nullable();
+    $table->integer('total_harga');
+
+    $table->enum('status', [
+        'menunggu',
+        'pending_payment',
+        'dibayar',
+        'selesai'
+    ])->default('menunggu');
+
+    $table->timestamps();
+});
     }
 
     /**

@@ -20,7 +20,7 @@ class AdminController extends Controller
         */
 
         // Total pendapatan dari transaksi
-        $totalPendapatan = Transaksi::sum('jumlah_bayar');
+        $totalPendapatan = Transaksi::sum('total_bayar');
 
         // Total transaksi
         $totalTransaksi = Transaksi::count();
@@ -39,7 +39,7 @@ class AdminController extends Controller
         */
 
         $pendapatanPerHari = Transaksi::selectRaw(
-                'DATE(created_at) as tanggal, SUM(jumlah_bayar) as total'
+                'DATE(created_at) as tanggal, SUM(total_bayar) as total'
             )
             ->where('created_at', '>=', Carbon::now()->subDays(7))
             ->groupBy('tanggal')
