@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Produk;
 use App\Models\Pesanan;
 use App\Models\Detail_Pesanan;
+use App\Models\Transaksi;
 use Illuminate\Support\Str;
 
 use Xendit\Configuration;
@@ -27,10 +28,6 @@ class CustomerController extends Controller
         ]);
     }
 
-    /*
-    | ADD TO CART
-    */
-
     public function addToCart(Request $request)
     {
         $produk = Produk::findOrFail($request->produk_id);
@@ -38,8 +35,8 @@ class CustomerController extends Controller
         $cart = session()->get('cart', []);
 
         if(isset($cart[$produk->id])){
-            $cart[$produk->id]['qty'] += 1;
-        }else{
+            $cart[$produk->id]['qty']++;
+        } else {
             $cart[$produk->id] = [
                 'produk_id' => $produk->id,
                 'nama' => $produk->nama_produk,
@@ -50,12 +47,8 @@ class CustomerController extends Controller
 
         session()->put('cart', $cart);
 
-        return back()->with('success','Produk ditambahkan ke keranjang');
+        return back()->with('success','Produk ditambahkan');
     }
-
-    /*
-    | REMOVE CART
-    */
 
     public function removeCart($id)
     {
@@ -67,16 +60,11 @@ class CustomerController extends Controller
 
         session()->put('cart', $cart);
 
-        return back()->with('success','Produk dihapus');
+        return back();
     }
-
-    /*
-    | CHECKOUT
-    */
 
     public function checkout(Request $request)
     {
-
         $cart = session()->get('cart');
 
         if(!$cart){
@@ -89,10 +77,6 @@ class CustomerController extends Controller
             $total += $item['harga'] * $item['qty'];
         }
 
-        /*
-        | BUAT PESANAN
-        */
-
         $pesanan = Pesanan::create([
             'kode_pesanan' => 'PSN-'.Str::random(6),
             'nama_pelanggan' => $request->nama_pelanggan,
@@ -101,12 +85,7 @@ class CustomerController extends Controller
             'status' => 'pending_payment'
         ]);
 
-        /*
-        | DETAIL PESANAN
-        */
-
         foreach($cart as $item){
-
             Detail_Pesanan::create([
                 'pesanan_id' => $pesanan->id,
                 'produk_id' => $item['produk_id'],
@@ -114,98 +93,62 @@ class CustomerController extends Controller
                 'harga' => $item['harga'],
                 'subtotal' => $item['harga'] * $item['qty']
             ]);
-
         }
 
-        /*
-        | HAPUS CART
-        */
+        $metode = $request->metode_pembayaran;
+
+        // ================= CASH =================
+        if($metode == 'cash'){
+
+            $pesanan->update([
+                'status' => 'dibayar'
+            ]);
+
+            session()->forget('cart');
+
+            return redirect('/payment-success')
+                ->with('success','Pembayaran cash berhasil');
+        }
+
+        // ================= ONLINE (XENDIT) =================
+        Configuration::setXenditKey(config('services.xendit.secret_key'));
+
+        $apiInstance = new InvoiceApi();
+
+        $createInvoiceRequest = new CreateInvoiceRequest([
+            'external_id' => $pesanan->kode_pesanan,
+            'description' => 'Pembayaran '.$pesanan->kode_pesanan,
+            'amount' => $pesanan->total_harga,
+            'success_redirect_url' => url('/payment-success?meja='.$request->nomor_meja),
+            'failure_redirect_url' => url('/payment-failed?meja='.$request->nomor_meja)
+        ]);
+
+        $invoice = $apiInstance->createInvoice($createInvoiceRequest);
+
+        Transaksi::create([
+            'pesanan_id' => $pesanan->id,
+            'invoice_id' => $invoice['id'],
+            'external_id' => $pesanan->kode_pesanan,
+            'total_bayar' => $pesanan->total_harga,
+            'status' => 'pending'
+        ]);
 
         session()->forget('cart');
 
-        /*
-        | XENDIT PAYMENT
-        */
-
-        Configuration::setXenditKey(config('services.xendit.secret_key'));
-
-$apiInstance = new InvoiceApi();
-
-$createInvoiceRequest = new CreateInvoiceRequest([
-    'external_id' => $pesanan->kode_pesanan,
-    'description' => 'Pembayaran '.$pesanan->kode_pesanan,
-    'amount' => $pesanan->total_harga,
-    'success_redirect_url' => url('/payment-success'),
-    'failure_redirect_url' => url('/payment-failed')
-]);
-
-$invoice = $apiInstance->createInvoice($createInvoiceRequest);
-
-/*
-| SIMPAN KE TABEL TRANSAKSI
-*/
-
-Transaksi::create([
-    'pesanan_id' => $pesanan->id,
-    'invoice_id' => $invoice['id'],
-    'external_id' => $pesanan->kode_pesanan,
-    'total_bayar' => $pesanan->total_harga,
-    'status' => 'pending'
-]);
-
-return redirect($invoice['invoice_url']);
+        return redirect($invoice['invoice_url']);
     }
 
-    /*
-    | WEBHOOK
-    */
-
-    public function webhook(Request $request)
+    public function success(Request $request)
 {
+    $meja = $request->meja;
 
-    $kode = $request->external_id;
+    return view('customer.success', compact('meja'));
+}
 
-    $pesanan = Pesanan::where('kode_pesanan',$kode)->first();
+     public function failed(Request $request)
+{
+    $meja = $request->meja;
 
-    if(!$pesanan){
-        return response()->json(['message'=>'Pesanan tidak ditemukan'],404);
-    }
-
-    $transaksi = Transaksi::where('external_id',$kode)->first();
-
-    if($request->status == 'PAID'){
-
-        $pesanan->update([
-            'status' => 'dibayar'
-        ]);
-
-        if($transaksi){
-            $transaksi->update([
-                'status' => 'paid'
-            ]);
-        }
-
-    }
-
-    return response()->json(['success'=>true]);
-} 
-    
-
-    /*
-    | SUCCESS PAGE
-    */
-
-    public function success()
-    {
-        return view('customer.success');
-    }
-
-    /*
-    | FAILED PAGE
-    */
-
-    public function failed()
-    {
-        return view('customer.failed');
-    }
+    return view('customer.failed', compact('meja'));
+}
 }

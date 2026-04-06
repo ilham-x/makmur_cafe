@@ -240,6 +240,7 @@ Meja: <b>{{ $psn->nomor_meja }}</b> |
 
 <form method="POST" action="{{ route('cashier.updateStatus',$psn->id) }}">
 @csrf
+@method("PUT")
 <input type="hidden" name="status" value="pending_payment">
 <button style="font-size:10px;padding:5px;">Kirim</button>
 </form>
