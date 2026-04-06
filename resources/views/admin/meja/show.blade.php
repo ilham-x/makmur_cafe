@@ -42,7 +42,7 @@
     </p>
 
     <div style="text-align:center; margin-top:15px;">
-        <a href="{{ url('/menu/'.$meja->kode_qr) }}" target="_blank">
+        <a href="{{ url('/menu/'.$meja->nomor_meja) }}" target="_blank">
             <button>Buka Link Menu</button>
         </a>
     </div>

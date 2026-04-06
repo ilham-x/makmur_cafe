@@ -1,132 +1,136 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kasir Coffee Makmur</title>
+<title>Kasir</title>
+
+<meta name="csrf-token" content="{{ csrf_token() }}">
 
 <style>
-
 :root{
---bg:#f8f8f8;
---primary:#4ade80;
---secondary:#fde047;
---accent:#fb7185;
---dark:#000;
---light:#fff;
---shadow:6px 6px 0px #000;
+  --bg:#fefefe;
+  --primary:#7ca36a;
+  --secondary:#f4d35e;
+  --dark:#111;
+  --light:#fff;
 }
 
 *{
-box-sizing:border-box;
-font-family:Arial, Helvetica, sans-serif;
+  box-sizing:border-box;
+  font-family:Arial, Helvetica, sans-serif;
 }
 
 body{
-margin:0;
-background:var(--bg);
+  margin:0;
+  background:var(--bg);
+  color:var(--dark);
 }
 
 .container{
-max-width:1200px;
-margin:auto;
-padding:25px;
+  max-width:1200px;
+  margin:auto;
+  padding:20px;
 }
 
-/* HEADER */
-
-.header{
-background:var(--secondary);
-border:4px solid var(--dark);
-box-shadow:var(--shadow);
-padding:16px 20px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin-bottom:25px;
+h1,h2{
+  font-weight:900;
+  margin-top:0;
 }
 
-.header h1{
-margin:0;
-font-size:22px;
-font-weight:900;
+/* GRID UTAMA */
+.grid{
+  display:grid;
+  grid-template-columns:2fr 1fr;
+  gap:15px;
+}
+
+/* GRID PRODUK (FIX TIDAK PANJANG) */
+.menu-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(140px, 1fr));
+  gap:10px;
+  align-items:start; /* 🔥 FIX UTAMA */
+}
+
+/* CARD PRODUK */
+.card{
+  background:var(--light);
+  border:2px solid var(--dark);
+  padding:8px;
+  text-align:center;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+}
+
+/* GAMBAR */
+.card img{
+  width:100%;
+  height:90px;
+  object-fit:cover;
+  border:2px solid var(--dark);
+  margin-bottom:5px;
+}
+
+/* TEXT */
+.card h4{
+  font-size:12px;
+  margin:3px 0;
+}
+
+.card p{
+  font-size:11px;
+  margin:2px 0;
 }
 
 /* BUTTON */
-
 button{
-background:var(--primary);
-border:3px solid var(--dark);
-padding:8px 14px;
-font-weight:900;
-cursor:pointer;
-box-shadow:var(--shadow);
-}
-
-button:hover{
-transform:translate(-3px,-3px);
-box-shadow:8px 8px 0px #000;
-}
-
-/* GRID */
-
-.grid{
-display:grid;
-grid-template-columns:2fr 1fr;
-gap:20px;
-}
-
-/* CARD */
-
-.card{
-background:var(--light);
-border:4px solid var(--dark);
-box-shadow:var(--shadow);
-padding:18px;
-}
-
-/* PRODUK */
-
-.product-grid{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:16px;
-margin-top:15px;
-}
-
-.product{
-border:3px solid var(--dark);
-padding:14px;
-box-shadow:var(--shadow);
-}
-
-.product h3{
-margin:0 0 8px;
-}
-
-.product p{
-margin:0 0 10px;
-font-weight:bold;
+  width:100%;
+  background:var(--primary);
+  color:#fff;
+  border:2px solid var(--dark);
+  padding:5px;
+  font-size:11px;
+  font-weight:bold;
+  cursor:pointer;
+  margin-top:5px;
 }
 
 /* CART */
-
-.cart-item{
-display:flex;
-justify-content:space-between;
-border-bottom:3px solid #ddd;
-padding:8px 0;
-font-weight:bold;
+.cart{
+  background:#fff;
+  padding:12px;
+  border:2px solid var(--dark);
+  position:sticky;
+  top:20px;
 }
 
-.total{
-display:flex;
-justify-content:space-between;
-font-size:18px;
-font-weight:900;
-margin-top:10px;
+/* INPUT */
+input{
+  width:100%;
+  padding:6px;
+  border:2px solid var(--dark);
+  margin-top:5px;
 }
 
+/* STATUS */
+.status-badge{
+  display:inline-block;
+  padding:3px 8px;
+  color:#fff;
+  font-size:11px;
+  border:2px solid var(--dark);
+}
+
+hr{
+  border:none;
+  border-top:2px solid var(--dark);
+  margin:10px 0;
+}
+.card{
+  border-radius:8px;
+}
 </style>
 </head>
 
@@ -134,135 +138,178 @@ margin-top:10px;
 
 <div class="container">
 
-<!-- HEADER -->
-
-<div class="header">
-
-<h1>☕ Coffee Makmur - Kasir</h1>
-
-<div style="display:flex; gap:10px; align-items:center;">
-
-<span>Halo, <b>{{$ire->name}}</b></span>
-
-<form action="{{ route('logout') }}" method="post">
-@csrf
-<button type="submit">
-Logout
-</button>
-</form>
-
-</div>
-
-</div>
+<h1>☕ Kasir</h1>
 
 <div class="grid">
 
-<!-- PRODUK -->
+<!-- MENU -->
+<div class="menu-grid">
+@foreach($anjlok as $menu)
 
 <div class="card">
 
-<h2>Daftar Produk</h2>
+@if($menu->gambar)
+<img src="{{ asset('storage/'.$menu->gambar) }}">
+@else
+<div style="height:90px; background:#eee; display:flex; align-items:center; justify-content:center; border:2px solid var(--dark);">
+Tidak ada
+</div>
+@endif
 
-<div class="product-grid">
+<h4>{{ $menu->nama_produk }}</h4>
+<p>Rp {{ number_format($menu->harga) }}</p>
 
-<div class="card">
-    <div style="
-        display:grid;
-        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-        gap:20px;
-    ">
-
-        @foreach($anjlok as $produk)
-        <div style="
-            border:3px solid #000;
-            padding:15px;
-            box-shadow:4px 4px 0px #000;
-            background:white;
-        ">
-            
-            {{-- Gambar --}}
-            @if($produk->gambar)
-                <img src="{{ asset('storage/'.$produk->gambar) }}" 
-                     style="width:100%; height:150px; object-fit:cover; margin-bottom:10px;">
-            @else
-                <div style="
-                    height:150px;
-                    background:#eee;
-                    display:flex;
-                    align-items:center;
-                    justify-content:center;
-                    margin-bottom:10px;
-                ">
-                    Tidak ada gambar
-                </div>
-            @endif
-
-            <form action="{{ route('cashier.cart.add') }}" method="POST">
+<form action="{{ route('customer.cart') }}" method="POST">
 @csrf
-
-<input type="hidden" name="produk_id" value="{{ $produk->id }}">
-<input type="hidden" name="nama" value="{{ $produk->nama_produk }}">
-<input type="hidden" name="harga" value="{{ $produk->harga }}">
-
-
-            <p>
-                Stok: 
-                <strong>
-                    {{ $produk->stok }}
-                </strong>
-            </p>
-
-            {{-- Aksi --}}
-            <div style="margin-top:10px;">
-                <button style="width:100%; margin-top:12px; background:var(--accent);">
-Tambah
-</button>
+<input type="hidden" name="produk_id" value="{{ $menu->id }}">
+<input type="hidden" name="nama" value="{{ $menu->nama_produk }}">
+<input type="hidden" name="harga" value="{{ $menu->harga }}">
+<button type="submit">Tambah</button>
 </form>
-            </div>
-
-        </div>
-        @endforeach
-
-    </div>
-</div>
-</div>
 
 </div>
 
-<!-- KERANJANG -->
-
-<div class="card">
-
-<h2>Keranjang</h2>
-
-@php
-$cart = session('cart', []);
-$total = 0;
-@endphp
-
-@forelse($cart as $item)
-<div class="cart-item">
-    <span>{{ $item['nama'] }} (x{{ $item['qty'] }})</span>
-    <span>Rp {{ number_format($item['harga'] * $item['qty']) }}</span>
+@endforeach
 </div>
 
-@php
-$total += $item['harga'] * $item['qty'];
-@endphp
+<!-- CART -->
+<div class="cart">
+@include('cashier.cart_partial')
+</div>
 
-@empty
-<p>Keranjang kosong</p>
-@endforelse
+</div>
 
-<div class="total">
+<hr>
+
+<h2>📋 Daftar Pesanan</h2>
+
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;">
+
+@foreach($pesanans as $psn)
+
+<div class="card" style="text-align:left;padding:10px;">
+
+<!-- HEADER -->
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;">
+<b>#{{ $psn->kode_pesanan }}</b>
+
+<span class="status-badge" style="
+background:
+{{ 
+ $psn->status == 'menunggu' ? '#6c757d' :
+($psn->status == 'pending_payment' ? '#f4d35e' :
+($psn->status == 'dibayar' ? '#7ca36a' :
+'black'))
+}};
+font-size:10px;
+">
+{{ $psn->status }}
+</span>
+</div>
+
+<!-- INFO -->
+<div style="font-size:11px;margin-bottom:5px;">
+Meja: <b>{{ $psn->nomor_meja }}</b> |
+{{ $psn->nama_pelanggan }}
+</div>
+
+<hr style="margin:6px 0;">
+
+<!-- DETAIL PRODUK -->
+<div style="font-size:11px;max-height:80px;overflow:auto;">
+@foreach($psn->detail as $d)
+<div style="display:flex;justify-content:space-between;">
+<span>{{ $d->produk->nama_produk }} x{{ $d->qty }}</span>
+<span>Rp {{ number_format($d->subtotal) }}</span>
+</div>
+@endforeach
+</div>
+
+<hr style="margin:6px 0;">
+
+<!-- TOTAL -->
+<div style="display:flex;justify-content:space-between;font-size:12px;font-weight:bold;">
 <span>Total</span>
-<span>Rp {{ number_format($total) }}</span>
+<span>Rp {{ number_format($psn->total_harga) }}</span>
+</div>
+
+<!-- BUTTON -->
+<div style="margin-top:8px;display:flex;gap:5px;flex-wrap:wrap;">
+
+@if($psn->status == 'menunggu')
+
+<form method="POST" action="{{ route('cashier.updateStatus',$psn->id) }}">
+@csrf
+<input type="hidden" name="status" value="pending_payment">
+<button style="font-size:10px;padding:5px;">Kirim</button>
+</form>
+
+@elseif($psn->status == 'pending_payment')
+
+@if($psn->metode_pembayaran == 'cash')
+
+<form method="POST" action="{{ route('cashier.bayar',$psn->id) }}">
+@csrf
+<input type="number" name="bayar" placeholder="Bayar" style="font-size:10px;padding:4px;">
+<button style="font-size:10px;padding:5px;">Bayar</button>
+</form>
+
+@else
+
+<form method="POST" action="{{ route('cashier.bayar',$psn->id) }}">
+@csrf
+<button style="font-size:10px;padding:5px;">Konfirmasi</button>
+</form>
+
+@endif
+
+@elseif($psn->status == 'dibayar')
+
+<form method="POST" action="{{ route('cashier.updateStatus',$psn->id) }}">
+@csrf
+<input type="hidden" name="status" value="selesai">
+<button style="font-size:10px;padding:5px;">Selesai</button>
+</form>
+
+<a href="{{ route('struk',$psn->id) }}" target="_blank">
+<button type="button" style="font-size:10px;padding:5px;background:var(--secondary);">Cetak</button>
+</a>
+
+@else
+<span style="font-size:11px;">✔️ Selesai</span>
+@endif
 
 </div>
 
 </div>
 
+@endforeach
+
 </div>
+
+<script>
+function updateCart(id, type){
+ fetch("{{ route('cashier.cart.update') }}", {
+  method:"POST",
+  headers:{
+   "X-CSRF-TOKEN":document.querySelector('meta[name="csrf-token"]').content,
+   "Content-Type":"application/json"
+  },
+  body:JSON.stringify({produk_id:id,type:type})
+ }).then(()=>location.reload());
+}
+
+function deleteCart(id){
+ fetch("{{ route('cashier.cart.delete') }}", {
+  method:"POST",
+  headers:{
+   "X-CSRF-TOKEN":document.querySelector('meta[name="csrf-token"]').content,
+   "Content-Type":"application/json"
+  },
+  body:JSON.stringify({produk_id:id})
+ }).then(()=>location.reload());
+}
+</script>
 
 </body>
 </html>

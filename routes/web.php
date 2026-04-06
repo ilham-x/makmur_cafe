@@ -9,17 +9,6 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\TransaksiController;
 use Illuminate\Support\Facades\Auth;
 Route::get('/', function () {
-
-    if (Auth::check()) {
-        $user = Auth::user();
-
-        if ($user->role === 'admin') {
-            return redirect()->route('admin.dashboard');
-        } elseif ($user->role === 'cashier') {
-            return redirect()->route('cashier.dashboard');
-        }
-    }
-
     return view('welcome'); // kalau belum login
 });
 use App\Http\Controllers\CustomerController;
@@ -46,8 +35,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/cashier/cart/add', [App\Http\Controllers\CashierController::class, 'addToCart'])
     ->name('cashier.cart.add');
     Route::post('/cart/update', [App\Http\Controllers\CashierController::class, 'updateCart'])->name('cashier.cart.update');
-Route::post('/cart/delete', [CustomerControApp\Http\Controllers\CashierController::class, 'deleteCart'])->name('cashier.cart.delete');
-
+    Route::post('/cart/delete', [App\Http\Controllers\CashierController::class, 'deleteCart'])->name('cashier.cart.delete');
+    Route::get('/export-pdf', [App\Http\Controllers\CashierController::class, 'exportPdf']);
+    Route::post('/checkout', [App\Http\Controllers\CashierController::class, 'checkout'])->name('cashier.checkout');
+    Route::get('/struk/{id}', [App\Http\Controllers\CashierController::class, 'struk'])->name('struk');
+     Route::post('/cashier/bayar/{id}', [App\Http\Controllers\CashierController::class, 'bayar'])->name('cashier.bayar');
+    Route::put('/cashier/updateStatus', [App\Http\Controllers\CashierController::class, 'updateStatus'])->name('cashier.updateStatus');
 });
 
 Route::prefix('admin')

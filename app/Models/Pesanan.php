@@ -7,10 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 class Pesanan extends Model
 {   protected $table = "pesanans";
     protected $fillable = [
-        'meja_id',
+        'nomor_meja',
+         'nama_pelanggan',
         'kode_pesanan',
         'status',
         'total_harga',
+        'metode_pembayaran'
     ];
 
     public function meja()
@@ -34,4 +36,8 @@ class Pesanan extends Model
     {
         return $this->hasMany(Ulasan::class);
     }
+    public function detail()
+{
+    return $this->hasMany(Detail_Pesanan::class, 'pesanan_id');
+}
 }

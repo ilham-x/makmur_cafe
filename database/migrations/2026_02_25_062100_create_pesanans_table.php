@@ -24,7 +24,7 @@ return new class extends Migration
         'dibayar',
         'selesai'
     ])->default('menunggu');
-
+    $table->string('metode_pembayaran')->nullable();
     $table->timestamps();
 });
     }
