@@ -69,7 +69,7 @@ button{
 Terima kasih! Pesanan kamu sedang diproses oleh dapur ☕
 </p>
 
-<a href="{{'url('/menu/'.$meja)'}}">
+<a href="{{ route('customer.menu', $meja) }}">
 <button>
 Kembali ke Menu
 </button>

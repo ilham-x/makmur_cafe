@@ -33,9 +33,24 @@ body{
   padding:20px;
 }
 
-h1,h2{
-  font-weight:900;
-  margin-top:0;
+/* HEADER */
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:15px;
+}
+
+.header h1{
+  margin:0;
+  font-size:28px;
+}
+
+.logout-btn{
+  width:auto;
+  padding:8px 14px;
+  font-size:12px;
+  background:#dc3545;
 }
 
 /* GRID UTAMA */
@@ -45,42 +60,49 @@ h1,h2{
   gap:15px;
 }
 
-/* GRID PRODUK (FIX TIDAK PANJANG) */
+/* GRID PRODUK */
 .menu-grid{
   display:grid;
   grid-template-columns:repeat(auto-fill, minmax(140px, 1fr));
-  gap:10px;
-  align-items:start; /* 🔥 FIX UTAMA */
+  gap:12px;
+  align-items:start;
 }
 
-/* CARD PRODUK */
+/* CARD */
 .card{
   background:var(--light);
   border:2px solid var(--dark);
-  padding:8px;
+  padding:10px;
   text-align:center;
   display:flex;
   flex-direction:column;
   justify-content:space-between;
+  border-radius:10px;
+  transition:0.2s;
+}
+
+.card:hover{
+  transform:scale(1.02);
 }
 
 /* GAMBAR */
 .card img{
   width:100%;
-  height:90px;
+  height:100px;
   object-fit:cover;
   border:2px solid var(--dark);
-  margin-bottom:5px;
+  border-radius:6px;
+  margin-bottom:6px;
 }
 
 /* TEXT */
 .card h4{
-  font-size:12px;
-  margin:3px 0;
+  font-size:13px;
+  margin:4px 0;
 }
 
 .card p{
-  font-size:11px;
+  font-size:12px;
   margin:2px 0;
 }
 
@@ -90,11 +112,12 @@ button{
   background:var(--primary);
   color:#fff;
   border:2px solid var(--dark);
-  padding:5px;
-  font-size:11px;
+  padding:6px;
+  font-size:12px;
   font-weight:bold;
   cursor:pointer;
-  margin-top:5px;
+  margin-top:6px;
+  border-radius:6px;
 }
 
 /* CART */
@@ -104,6 +127,7 @@ button{
   border:2px solid var(--dark);
   position:sticky;
   top:20px;
+  border-radius:10px;
 }
 
 /* INPUT */
@@ -112,6 +136,7 @@ input{
   padding:6px;
   border:2px solid var(--dark);
   margin-top:5px;
+  border-radius:5px;
 }
 
 /* STATUS */
@@ -121,15 +146,13 @@ input{
   color:#fff;
   font-size:11px;
   border:2px solid var(--dark);
+  border-radius:6px;
 }
 
 hr{
   border:none;
   border-top:2px solid var(--dark);
   margin:10px 0;
-}
-.card{
-  border-radius:8px;
 }
 </style>
 </head>
@@ -138,7 +161,15 @@ hr{
 
 <div class="container">
 
-<h1>☕ Kasir</h1>
+<!-- HEADER -->
+<div class="header">
+<h1>🫘 Kasir</h1>
+
+<form method="POST" action="{{ route('logout') }}">
+@csrf
+<button class="logout-btn">Logout</button>
+</form>
+</div>
 
 <div class="grid">
 
@@ -151,7 +182,7 @@ hr{
 @if($menu->gambar)
 <img src="{{ asset('storage/'.$menu->gambar) }}">
 @else
-<div style="height:90px; background:#eee; display:flex; align-items:center; justify-content:center; border:2px solid var(--dark);">
+<div style="height:100px;background:#eee;display:flex;align-items:center;justify-content:center;border:2px solid var(--dark);border-radius:6px;">
 Tidak ada
 </div>
 @endif
@@ -183,14 +214,14 @@ Tidak ada
 
 <h2>📋 Daftar Pesanan</h2>
 
-<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;">
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:15px;">
 
 @foreach($pesanans as $psn)
 
-<div class="card" style="text-align:left;padding:10px;">
+<div class="card" style="text-align:left;">
 
 <!-- HEADER -->
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;">
+<div style="display:flex;justify-content:space-between;align-items:center;">
 <b>#{{ $psn->kode_pesanan }}</b>
 
 <span class="status-badge" style="
@@ -207,16 +238,14 @@ font-size:10px;
 </span>
 </div>
 
-<!-- INFO -->
-<div style="font-size:11px;margin-bottom:5px;">
-Meja: <b>{{ $psn->nomor_meja }}</b> |
-{{ $psn->nama_pelanggan }}
+<div style="font-size:12px;margin:6px 0;">
+Meja: <b>{{ $psn->nomor_meja }}</b> | {{ $psn->nama_pelanggan }}
 </div>
 
-<hr style="margin:6px 0;">
+<hr>
 
-<!-- DETAIL PRODUK -->
-<div style="font-size:11px;max-height:80px;overflow:auto;">
+<!-- DETAIL -->
+<div style="font-size:12px;max-height:90px;overflow:auto;">
 @foreach($psn->detail as $d)
 <div style="display:flex;justify-content:space-between;">
 <span>{{ $d->produk->nama_produk }} x{{ $d->qty }}</span>
@@ -225,16 +254,16 @@ Meja: <b>{{ $psn->nomor_meja }}</b> |
 @endforeach
 </div>
 
-<hr style="margin:6px 0;">
+<hr>
 
 <!-- TOTAL -->
-<div style="display:flex;justify-content:space-between;font-size:12px;font-weight:bold;">
+<div style="display:flex;justify-content:space-between;font-weight:bold;">
 <span>Total</span>
 <span>Rp {{ number_format($psn->total_harga) }}</span>
 </div>
 
 <!-- BUTTON -->
-<div style="margin-top:8px;display:flex;gap:5px;flex-wrap:wrap;">
+<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;">
 
 @if($psn->status == 'menunggu')
 
@@ -242,7 +271,7 @@ Meja: <b>{{ $psn->nomor_meja }}</b> |
 @csrf
 @method("PUT")
 <input type="hidden" name="status" value="pending_payment">
-<button style="font-size:10px;padding:5px;">Kirim</button>
+<button>Kirim</button>
 </form>
 
 @elseif($psn->status == 'pending_payment')
@@ -251,15 +280,15 @@ Meja: <b>{{ $psn->nomor_meja }}</b> |
 
 <form method="POST" action="{{ route('cashier.bayar',$psn->id) }}">
 @csrf
-<input type="number" name="bayar" placeholder="Bayar" style="font-size:10px;padding:4px;">
-<button style="font-size:10px;padding:5px;">Bayar</button>
+<input type="number" name="bayar" placeholder="Bayar">
+<button>Bayar</button>
 </form>
 
 @else
 
 <form method="POST" action="{{ route('cashier.bayar',$psn->id) }}">
 @csrf
-<button style="font-size:10px;padding:5px;">Konfirmasi</button>
+<button>Konfirmasi</button>
 </form>
 
 @endif
@@ -269,15 +298,15 @@ Meja: <b>{{ $psn->nomor_meja }}</b> |
 <form method="POST" action="{{ route('cashier.updateStatus',$psn->id) }}">
 @csrf
 <input type="hidden" name="status" value="selesai">
-<button style="font-size:10px;padding:5px;">Selesai</button>
+<button>Selesai</button>
 </form>
 
-<a href="{{ route('struk',$psn->id) }}" target="_blank">
-<button type="button" style="font-size:10px;padding:5px;background:var(--secondary);">Cetak</button>
+<a href="{{ route('struk',$psn->id) }}" target="_blank" style="width:100%;">
+<button type="button" style="background:var(--secondary);color:#000;">Cetak</button>
 </a>
 
 @else
-<span style="font-size:11px;">✔️ Selesai</span>
+<span>✔️ Selesai</span>
 @endif
 
 </div>

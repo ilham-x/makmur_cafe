@@ -75,12 +75,12 @@
             <!-- Badge -->
             <span class="inline-block mb-4 px-4 py-1 text-sm rounded-full
                          bg-yellow-500/20 border border-yellow-400/30">
-                ✨ Cafe Modern & Nyaman
+                ✨ Caffe Modern & Nyaman
             </span>
 
             <!-- Title -->
             <h1 class="text-4xl md:text-6xl font-bold mb-4 leading-tight">
-                Cafe Makmur
+                Kopi Toko Makmur
             </h1>
 
             <!-- Subtitle -->

@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Model;
         'invoice_id',
         'external_id',
         'total_bayar',
-        'status'
+        'status',
     ];
 
 

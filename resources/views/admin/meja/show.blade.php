@@ -32,7 +32,7 @@
     <h3>QR Code</h3>
 
     <div style="margin:15px 0; text-align:center;">
-        {!! QrCode::size(200)->generate(url('/menu/'.$meja->kode_qr)) !!}
+        {!! QrCode::size(200)->generate(url('/menu/'.$meja->nomor_meja)) !!}
     </div>
 
     <p style="text-align:center;">

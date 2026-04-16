@@ -49,14 +49,11 @@
             <p style="font-weight:bold;">
                 Rp {{ number_format($produk->harga) }}
             </p>
+                {{-- Kategori --}}
+                <p style="font-style:italic; color:#555;">
+                    {{ $produk->kategori }}
 
-            {{-- Stok --}}
-            <p>
-                Stok: 
-                <strong>
-                    {{ $produk->stok }}
-                </strong>
-            </p>
+            
 
             {{-- Aksi --}}
             <div style="margin-top:10px;">

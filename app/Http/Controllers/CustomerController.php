@@ -8,7 +8,7 @@ use App\Models\Pesanan;
 use App\Models\Detail_Pesanan;
 use App\Models\Transaksi;
 use Illuminate\Support\Str;
-
+use Carbon\Carbon;
 use Xendit\Configuration;
 use Xendit\Invoice\InvoiceApi;
 use Xendit\Invoice\CreateInvoiceRequest;
@@ -16,17 +16,42 @@ use Xendit\Invoice\CreateInvoiceRequest;
 class CustomerController extends Controller
 {
 
-    public function index($meja)
-    {
-        $menus = Produk::where('is_available', true)->get();
-        $cart = session()->get('cart', []);
+   public function index(Request $request, $meja)
+{
+    $query = Produk::where('is_available', true);
 
-        return view('customer.dashboard', [
-            'menus' => $menus,
-            'nomor_meja' => $meja,
-            'cart' => $cart
-        ]);
+    // 🔍 SEARCH
+    if ($request->q) {
+        $query->where('nama_produk', 'like', '%' . $request->q . '%');
     }
+
+    // 📂 FILTER KATEGORI
+    if ($request->kategori) {
+        $query->where('kategori', $request->kategori);
+    }
+
+    $menus = $query->get();
+
+    // 🔥 BEST SELLER MINGGU INI
+    $bestSellerIds = \App\Models\Detail_Pesanan::where('created_at', '>=', Carbon::now()->subDays(7))
+        ->select('produk_id')
+        ->selectRaw('SUM(qty) as total_qty')
+        ->groupBy('produk_id')
+        ->orderByDesc('total_qty')
+        ->limit(5)
+        ->pluck('produk_id');
+
+    $bestSellers = Produk::whereIn('id', $bestSellerIds)->get();
+
+    $cart = session()->get('cart', []);
+
+    return view('customer.dashboard', [
+        'menus' => $menus,
+        'bestSellers' => $bestSellers,
+        'nomor_meja' => $meja,
+        'cart' => $cart
+    ]);
+}
 
     public function addToCart(Request $request)
     {
@@ -82,7 +107,8 @@ class CustomerController extends Controller
             'nama_pelanggan' => $request->nama_pelanggan,
             'nomor_meja' => $request->nomor_meja,
             'total_harga' => $total,
-            'status' => 'pending_payment'
+            'status' => 'pending_payment',
+            'metode_pembayaran' =>  $request->metode_pembayaran,
         ]);
 
         foreach($cart as $item){
@@ -101,13 +127,16 @@ class CustomerController extends Controller
         if($metode == 'cash'){
 
             $pesanan->update([
-                'status' => 'dibayar'
+                'status' => 'pending_payment'
             ]);
-
+             Transaksi::create([
+            'pesanan_id' => $pesanan->id,
+            'total_bayar' => $pesanan->total_harga,
+            'status' => 'pending'
+        ]);
             session()->forget('cart');
 
-            return redirect('/payment-success')
-                ->with('success','Pembayaran cash berhasil');
+            return back()->with('success','Pembayaran cash berhasil');
         }
 
         // ================= ONLINE (XENDIT) =================
@@ -120,7 +149,7 @@ class CustomerController extends Controller
             'description' => 'Pembayaran '.$pesanan->kode_pesanan,
             'amount' => $pesanan->total_harga,
             'success_redirect_url' => url('/payment-success?meja='.$request->nomor_meja),
-            'failure_redirect_url' => url('/payment-failed?meja='.$request->nomor_meja)
+            'failure_redirect_url' => url('/payment-failed')
         ]);
 
         $invoice = $apiInstance->createInvoice($createInvoiceRequest);

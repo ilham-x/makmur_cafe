@@ -11,9 +11,9 @@ use Illuminate\Support\Facades\Auth;
 Route::get('/', function () {
     return view('welcome'); // kalau belum login
 });
-use App\Http\Controllers\CustomerController;
 
-Route::get('/menu/{meja}',[CustomerController::class,'index']);
+use App\Http\Controllers\CustomerController;
+Route::get('/menu/{meja}',[CustomerController::class,'index'])->name("customer.menu");
 
 Route::post('/cart/add',[CustomerController::class,'addToCart'])->name('customer.cart');
 
@@ -22,7 +22,8 @@ Route::get('/cart/remove/{id}',[CustomerController::class,'removeCart'])->name('
 Route::post('/checkout',[CustomerController::class,'checkout'])->name('customer.checkout');
 
 Route::post('/xendit/webhook',[CustomerController::class,'webhook']);
-
+Route::post('/cart/update', [CartController::class, 'update'])->name('cart.update');
+Route::post('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');
 Route::get('/payment-success',[CustomerController::class,'success']);
 
 Route::get('/payment-failed',[CustomerController::class,'failed']);

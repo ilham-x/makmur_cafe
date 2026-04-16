@@ -22,13 +22,13 @@
             <tr>
                 <td>#{{ $transaksi->id }}</td>
                 <td>
-                    {{ $transaksi->pesanan->meja->nomor_meja ?? '-' }}
+                    {{ $transaksi->pesanan->nomor_meja ?? '-' }}
                 </td>
                 <td>
-                    Rp {{ number_format($transaksi->jumlah_bayar,0,',','.') }}
+                    Rp {{ number_format($transaksi->total_bayar,0,',','.') }}
                 </td>
-                <td>{{ $transaksi->metode_pembayaran ?? '-' }}</td>
-                <td>{{ ucfirst($transaksi->status ?? 'selesai') }}</td>
+                <td>{{ $transaksi->pesanan->metode_pembayaran ?? '-' }}</td>
+                <td>{{ ucfirst($transaksi->pesanan->status ?? 'selesai') }}</td>
                 <td>{{ $transaksi->created_at->format('d-m-Y H:i') }}</td>
                 <td>
                     <a href="{{ route('admin.transaksi.show',$transaksi->id) }}">
