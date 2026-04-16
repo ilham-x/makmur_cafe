@@ -32,7 +32,7 @@
     <h3>QR Code</h3>
 
     <div style="margin:15px 0; text-align:center;">
-        {!! QrCode::size(200)->generate(url('/menu/'.$meja->kode_qr)) !!}
+        {!! QrCode::size(200)->generate(url('/menu/'.$meja->nomor_meja)) !!}
     </div>
 
     <p style="text-align:center;">
@@ -42,7 +42,7 @@
     </p>
 
     <div style="text-align:center; margin-top:15px;">
-        <a href="{{ url('/menu/'.$meja->kode_qr) }}" target="_blank">
+        <a href="{{ url('/menu/'.$meja->nomor_meja) }}" target="_blank">
             <button>Buka Link Menu</button>
         </a>
     </div>

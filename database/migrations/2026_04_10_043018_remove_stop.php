@@ -11,17 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('mejas', function (Blueprint $table) {
-            $table->enum('status', ['aktif','nonaktif'])
-                  ->default('aktif')
-                  ->after('kode_qr');
+        Schema::table('produks', function (Blueprint $table) {
+            $table->dropColumn("stok");
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
-        Schema::table('mejas', function (Blueprint $table) {
-            $table->dropColumn('status');
-        });
+        //
     }
 };

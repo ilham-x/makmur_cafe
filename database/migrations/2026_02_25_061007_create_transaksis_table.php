@@ -14,13 +14,18 @@ return new class extends Migration
        Schema::create('transaksis', function (Blueprint $table) {
     $table->id();
 
-    $table->foreignId('pesanan_id')
-          ->constrained()
-          ->onDelete('cascade');
+    $table->foreignId('pesanan_id')->constrained()->cascadeOnDelete();
 
-    $table->string('metode_pembayaran'); // cash, qris
-    $table->decimal('jumlah_bayar', 12, 2);
-    $table->decimal('kembalian', 12, 2)->default(0);
+    $table->string('invoice_id')->nullable();
+    $table->string('external_id')->nullable();
+
+    $table->integer('total_bayar');
+
+    $table->enum('status',[
+        'pending',
+        'paid',
+        'failed'
+    ])->default('pending');
 
     $table->timestamps();
 });

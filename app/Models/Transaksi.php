@@ -4,15 +4,19 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Transaksi extends Model
+
+   class Transaksi extends Model
 {
+    protected $table = 'transaksis';
+
     protected $fillable = [
         'pesanan_id',
-        'user_id', // cashier yang memproses
-        'metode_pembayaran',
-        'jumlah_bayar',
-        'kembalian',
+        'invoice_id',
+        'external_id',
+        'total_bayar',
+        'status',
     ];
+
 
     public function pesanan()
     {

@@ -10,7 +10,7 @@ class ProdukController extends Controller
 {
     public function index()
     {
-        $produks = Produk::latest()->paginate(10);
+        $produks = Produk::latest()->get();
         return view('admin.produk.index', compact('produks'));
     }
 
@@ -24,8 +24,6 @@ class ProdukController extends Controller
         $request->validate([
             'nama_produk' => 'required|string|max:255',
             'harga' => 'required|numeric|min:0',
-            'stok' => 'required|integer|min:0',
-            'deskripsi' => 'nullable|string',
             'gambar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
         ]);
 
@@ -35,12 +33,13 @@ class ProdukController extends Controller
             $gambarPath = $request->file('gambar')
                 ->store('produk', 'public');
         }
+          
 
         Produk::create([
             'nama_produk' => $request->nama_produk,
             'harga' => $request->harga,
-            'stok' => $request->stok,
-            'deskripsi' => $request->deskripsi,
+           'kategori' => $request->kategori,
+            
             'gambar' => $gambarPath
         ]);
 
@@ -64,8 +63,8 @@ class ProdukController extends Controller
         $request->validate([
             'nama_produk' => 'required|string|max:255',
             'harga' => 'required|numeric|min:0',
-            'deskripsi' => 'nullable|string',
-            'stok' => 'required|integer|min:0'
+            'kategori' => 'nullable|string',
+            'gambar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
         ]);
 
         $produk->update($request->all());
