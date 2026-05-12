@@ -8,6 +8,7 @@ use App\Models\Produk;
 use App\Models\Ulasan;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
 {
@@ -38,13 +39,28 @@ class AdminController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $pendapatanPerHari = Transaksi::selectRaw(
-                'DATE(created_at) as tanggal, SUM(total_bayar) as total'
-            )
-            ->where('created_at', '>=', Carbon::now()->subDays(7))
-            ->groupBy('tanggal')
-            ->orderBy('tanggal', 'ASC')
-            ->get();
+        
+
+$raw = Transaksi::selectRaw(
+        'DATE(created_at) as tanggal, SUM(total_bayar) as total'
+    )
+    ->where('created_at', '>=', Carbon::now()->subDays(6)) // ✅ 7 hari
+    ->groupBy('tanggal')
+    ->orderBy('tanggal', 'ASC')
+    ->get()
+    ->keyBy('tanggal');
+
+// 🔥 generate 7 hari penuh
+$pendapatanPerHari = collect();
+
+for ($i = 6; $i >= 0; $i--) {
+    $tanggal = Carbon::now()->subDays($i)->format('Y-m-d');
+
+    $pendapatanPerHari->push([
+        'tanggal' => Carbon::parse($tanggal)->format('d M'),
+        'total' => $raw[$tanggal]->total ?? 0
+    ]);
+}
 
 
         /*

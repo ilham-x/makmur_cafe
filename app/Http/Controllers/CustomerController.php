@@ -16,42 +16,42 @@ use Xendit\Invoice\CreateInvoiceRequest;
 class CustomerController extends Controller
 {
 
-   public function index(Request $request, $meja)
-{
-    $query = Produk::where('is_available', true);
+    public function index(Request $request, $meja)
+    {
+        $query = Produk::where('is_available', true);
 
-    // 🔍 SEARCH
-    if ($request->q) {
-        $query->where('nama_produk', 'like', '%' . $request->q . '%');
+        // 🔍 SEARCH
+        if ($request->q) {
+            $query->where('nama_produk', 'like', '%' . $request->q . '%');
+        }
+
+        // 📂 FILTER KATEGORI
+        if ($request->kategori) {
+            $query->where('kategori', $request->kategori);
+        }
+
+        $menus = $query->get();
+
+        // 🔥 BEST SELLER MINGGU INI
+        $bestSellerIds = Detail_Pesanan::where('created_at', '>=', Carbon::now()->subDays(7))
+            ->select('produk_id')
+            ->selectRaw('SUM(qty) as total_qty')
+            ->groupBy('produk_id')
+            ->orderByDesc('total_qty')
+            ->limit(5)
+            ->pluck('produk_id');
+
+        $bestSellers = Produk::whereIn('id', $bestSellerIds)->get();
+
+        $cart = session()->get('cart', []);
+
+        return view('customer.dashboard', [
+            'menus' => $menus,
+            'bestSellers' => $bestSellers,
+            'nomor_meja' => $meja,
+            'cart' => $cart
+        ]);
     }
-
-    // 📂 FILTER KATEGORI
-    if ($request->kategori) {
-        $query->where('kategori', $request->kategori);
-    }
-
-    $menus = $query->get();
-
-    // 🔥 BEST SELLER MINGGU INI
-    $bestSellerIds = \App\Models\Detail_Pesanan::where('created_at', '>=', Carbon::now()->subDays(7))
-        ->select('produk_id')
-        ->selectRaw('SUM(qty) as total_qty')
-        ->groupBy('produk_id')
-        ->orderByDesc('total_qty')
-        ->limit(5)
-        ->pluck('produk_id');
-
-    $bestSellers = Produk::whereIn('id', $bestSellerIds)->get();
-
-    $cart = session()->get('cart', []);
-
-    return view('customer.dashboard', [
-        'menus' => $menus,
-        'bestSellers' => $bestSellers,
-        'nomor_meja' => $meja,
-        'cart' => $cart
-    ]);
-}
 
     public function addToCart(Request $request)
     {
@@ -59,7 +59,7 @@ class CustomerController extends Controller
 
         $cart = session()->get('cart', []);
 
-        if(isset($cart[$produk->id])){
+        if (isset($cart[$produk->id])) {
             $cart[$produk->id]['qty']++;
         } else {
             $cart[$produk->id] = [
@@ -72,14 +72,57 @@ class CustomerController extends Controller
 
         session()->put('cart', $cart);
 
-        return back()->with('success','Produk ditambahkan');
+        return back()->with('success', 'Produk ditambahkan');
     }
 
+    // ================= UPDATE QTY (➕ ➖) =================
+    public function updateCart(Request $request)
+    {
+        $cart = session()->get('cart', []);
+        $id = $request->produk_id;
+
+        if (isset($cart[$id])) {
+
+            if ($request->action == 'increase') {
+                $cart[$id]['qty'] += 1;
+            }
+
+            if ($request->action == 'decrease') {
+                $cart[$id]['qty'] -= 1;
+
+                // jika qty habis → hapus item
+                if ($cart[$id]['qty'] <= 0) {
+                    unset($cart[$id]);
+                }
+            }
+        }
+
+        session()->put('cart', $cart);
+
+        return back();
+    }
+
+    // ================= HAPUS ITEM (🗑️) =================
+    public function removeCartPost(Request $request)
+    {
+        $cart = session()->get('cart', []);
+        $id = $request->produk_id;
+
+        if (isset($cart[$id])) {
+            unset($cart[$id]);
+        }
+
+        session()->put('cart', $cart);
+
+        return back();
+    }
+
+    // (tetap ada, tidak dihapus)
     public function removeCart($id)
     {
         $cart = session()->get('cart', []);
 
-        if(isset($cart[$id])){
+        if (isset($cart[$id])) {
             unset($cart[$id]);
         }
 
@@ -92,26 +135,26 @@ class CustomerController extends Controller
     {
         $cart = session()->get('cart');
 
-        if(!$cart){
-            return back()->with('error','Keranjang kosong');
+        if (!$cart) {
+            return back()->with('error', 'Keranjang kosong');
         }
 
         $total = 0;
 
-        foreach($cart as $item){
+        foreach ($cart as $item) {
             $total += $item['harga'] * $item['qty'];
         }
 
         $pesanan = Pesanan::create([
-            'kode_pesanan' => 'PSN-'.Str::random(6),
+            'kode_pesanan' => 'PSN-' . Str::random(6),
             'nama_pelanggan' => $request->nama_pelanggan,
             'nomor_meja' => $request->nomor_meja,
             'total_harga' => $total,
             'status' => 'pending_payment',
-            'metode_pembayaran' =>  $request->metode_pembayaran,
+            'metode_pembayaran' => $request->metode_pembayaran,
         ]);
 
-        foreach($cart as $item){
+        foreach ($cart as $item) {
             Detail_Pesanan::create([
                 'pesanan_id' => $pesanan->id,
                 'produk_id' => $item['produk_id'],
@@ -124,19 +167,21 @@ class CustomerController extends Controller
         $metode = $request->metode_pembayaran;
 
         // ================= CASH =================
-        if($metode == 'cash'){
+        if ($metode == 'cash') {
 
             $pesanan->update([
                 'status' => 'pending_payment'
             ]);
-             Transaksi::create([
-            'pesanan_id' => $pesanan->id,
-            'total_bayar' => $pesanan->total_harga,
-            'status' => 'pending'
-        ]);
+
+            Transaksi::create([
+                'pesanan_id' => $pesanan->id,
+                'total_bayar' => $pesanan->total_harga,
+                'status' => 'pending'
+            ]);
+
             session()->forget('cart');
 
-            return back()->with('success','Pembayaran cash berhasil');
+            return back()->with('success', 'Pembayaran cash berhasil');
         }
 
         // ================= ONLINE (XENDIT) =================
@@ -146,9 +191,9 @@ class CustomerController extends Controller
 
         $createInvoiceRequest = new CreateInvoiceRequest([
             'external_id' => $pesanan->kode_pesanan,
-            'description' => 'Pembayaran '.$pesanan->kode_pesanan,
+            'description' => 'Pembayaran ' . $pesanan->kode_pesanan,
             'amount' => $pesanan->total_harga,
-            'success_redirect_url' => url('/payment-success?meja='.$request->nomor_meja),
+            'success_redirect_url' => url('/payment-success?meja=' . $request->nomor_meja),
             'failure_redirect_url' => url('/payment-failed')
         ]);
 
@@ -168,16 +213,16 @@ class CustomerController extends Controller
     }
 
     public function success(Request $request)
-{
-    $meja = $request->meja;
+    {
+        $meja = $request->meja;
 
-    return view('customer.success', compact('meja'));
-}
+        return view('customer.success', compact('meja'));
+    }
 
-     public function failed(Request $request)
-{
-    $meja = $request->meja;
+    public function failed(Request $request)
+    {
+        $meja = $request->meja;
 
-    return view('customer.failed', compact('meja'));
-}
+        return view('customer.failed', compact('meja'));
+    }
 }

@@ -20,13 +20,12 @@ class Pesanan extends Model
         return $this->belongsTo(Meja::class);
     }
 
-    public function produks()
-    {
-        return $this->belongsToMany(Produk::class)
-                    ->withPivot('qty', 'harga')
-                    ->withTimestamps();
-    }
-
+   public function produks()
+{
+    return $this->belongsToMany(Produk::class, 'pesanan_produk', 'pesanan_id', 'produk_id')
+                ->withPivot('qty', 'harga')
+                ->withTimestamps();
+}
     public function transaksi()
     {
         return $this->hasOne(Transaksi::class);

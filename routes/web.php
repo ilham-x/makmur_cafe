@@ -17,13 +17,11 @@ Route::get('/menu/{meja}',[CustomerController::class,'index'])->name("customer.m
 
 Route::post('/cart/add',[CustomerController::class,'addToCart'])->name('customer.cart');
 
-Route::get('/cart/remove/{id}',[CustomerController::class,'removeCart'])->name('cart.remove');
-
 Route::post('/checkout',[CustomerController::class,'checkout'])->name('customer.checkout');
 
 Route::post('/xendit/webhook',[CustomerController::class,'webhook']);
-Route::post('/cart/update', [CartController::class, 'update'])->name('cart.update');
-Route::post('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');
+Route::post('/cart/update', [CustomerController::class, 'updateCart'])->name('cart.update');
+Route::post('/cart/remove', [CustomerController::class, 'removeCartPost'])->name('cart.remove');
 Route::get('/payment-success',[CustomerController::class,'success']);
 
 Route::get('/payment-failed',[CustomerController::class,'failed']);

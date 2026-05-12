@@ -4,7 +4,9 @@
 
 @section('content')
 
-<a href="{{route('admin.meja.create')}}">Tambah</a>
+<a href="{{ route('admin.meja.create') }}" class="btn-theme">
+    + Tambah
+</a>
 
 
 <div class="card">
@@ -23,7 +25,9 @@
 <td>{{ $meja->nomor_meja }}</td>
 <td>{{ $meja->status }}</td>
 <td>
-    <a href="{{ route('admin.meja.show',$meja->id) }}">Lihat QR</a>
+    <a href="{{ route('admin.meja.show',$meja->id) }}" class="btn-qr">
+    Lihat QR
+</a>
 </td>
 <td>
     <form action="{{ route('admin.meja.destroy',$meja->id) }}" method="POST">
