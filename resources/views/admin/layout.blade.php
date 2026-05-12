@@ -8,6 +8,56 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
+  /* WRAPPER */
+.pagination-wrap{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+  margin-top:25px;
+}
+
+/* GROUP ANGKA */
+.pg-numbers{
+  display:flex;
+  gap:10px;
+}
+
+/* BUTTON BASE */
+.pg-btn{
+  min-width:42px;
+  text-align:center;
+  padding:10px 14px;
+  background:var(--light);
+  border:3px solid var(--dark);
+  font-weight:900;
+  text-decoration:none;
+  color:var(--dark);
+  box-shadow:var(--shadow);
+  transition:all 0.15s ease;
+}
+
+/* HOVER */
+.pg-btn:hover{
+  transform:translate(-3px,-3px);
+  box-shadow:9px 9px 0 var(--dark);
+  background:var(--secondary);
+}
+
+/* ACTIVE PAGE */
+.pg-btn.active{
+  background:var(--primary);
+  color:var(--light);
+  transform:translate(-2px,-2px);
+  box-shadow:6px 6px 0 var(--dark);
+}
+
+/* DISABLED */
+.pg-btn.disabled{
+  opacity:0.4;
+  pointer-events:none;
+  background:#ddd;
+}
 :root{
   --bg:#fefefe;
   --primary:#7ca36a;
@@ -97,6 +147,62 @@ input, textarea {
     transform: translate(-3px,-3px);
     box-shadow:6px 6px 0px #000;
     transition:0.2s;
+}
+/* Semua tombol (termasuk <button>) */
+button, .btn-theme {
+  display: inline-block;
+  background: var(--primary);
+  color: var(--light);
+  border: 3px solid var(--dark);
+  padding: 10px 18px;
+  font-weight: 900;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  transition: all 0.15s ease;
+  letter-spacing: 0.5px;
+}
+
+/* Hover (efek khas brutalism: geser + shadow makin jauh) */
+button:hover, .btn-theme:hover {
+  transform: translate(-3px, -3px);
+  box-shadow: 9px 9px 0 var(--dark);
+}
+
+/* Active (efek ditekan) */
+button:active, .btn-theme:active {
+  transform: translate(3px, 3px);
+  box-shadow: 0px 0px 0 var(--dark);
+}
+.btn-qr {
+  display: inline-block;
+  background: var(--light);
+  color: var(--primary);
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 900;
+  border: 3px solid var(--primary);
+  text-decoration: none;
+  box-shadow: var(--shadow);
+  transition: all 0.15s ease;
+}
+
+/* Hover → jadi kuning */
+.btn-qr:hover {
+  background: var(--secondary);
+  color: var(--dark);
+  border-color: var(--dark);
+  transform: translate(-3px, -3px);
+  box-shadow: 9px 9px 0 var(--dark);
+}
+
+/* Klik → jadi merah (biar terasa aksi) */
+.btn-qr:active {
+  background: var(--accent);
+  color: var(--light);
+  border-color: var(--dark);
+  transform: translate(3px, 3px);
+  box-shadow: 0px 0px 0 var(--dark);
 }
 
 </style>

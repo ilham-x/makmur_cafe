@@ -46,7 +46,36 @@
 </div>
 
 <div>
-    {{ $transaksis->links() }}
+    @if ($transaksis->hasPages())
+<div class="pagination-wrap">
+
+    {{-- Prev --}}
+    @if ($transaksis->onFirstPage())
+        <span class="pg-btn disabled">←</span>
+    @else
+        <a href="{{ $transaksis->previousPageUrl() }}" class="pg-btn">←</a>
+    @endif
+
+    {{-- Numbers --}}
+    <div class="pg-numbers">
+        @foreach ($transaksis->links()->elements[0] ?? [] as $page => $url)
+            @if ($page == $transaksis->currentPage())
+                <span class="pg-btn active">{{ $page }}</span>
+            @else
+                <a href="{{ $url }}" class="pg-btn">{{ $page }}</a>
+            @endif
+        @endforeach
+    </div>
+
+    {{-- Next --}}
+    @if ($transaksis->hasMorePages())
+        <a href="{{ $transaksis->nextPageUrl() }}" class="pg-btn">→</a>
+    @else
+        <span class="pg-btn disabled">→</span>
+    @endif
+
+</div>
+@endif
 </div>
 
 @endsection

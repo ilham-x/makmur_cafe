@@ -47,8 +47,9 @@ class CashierController extends Controller
         return back();
     }
 
-    public function updateCart(Request $request)
-    {
+  public function updateCart(Request $request)
+{
+    try {
         $cart = session()->get('cart', []);
 
         if(isset($cart[$request->produk_id])){
@@ -61,8 +62,17 @@ class CashierController extends Controller
 
         session()->put('cart', $cart);
 
-        return response()->json(['success'=>true]);
+        return response()->json([
+            'success' => true,
+            'cart' => $cart
+        ]);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'error' => $e->getMessage()
+        ], 500);
     }
+}
 
     public function deleteCart(Request $request)
     {

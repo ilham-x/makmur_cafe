@@ -9,21 +9,27 @@
 
 <style>
 :root{
-  --bg:#fefefe;
-  --primary:#7ca36a;
-  --secondary:#f4d35e;
-  --dark:#111;
-  --light:#fff;
+  /* WARNE NEOBRUTALISM (Lebih Bold & Cerah) */
+  --bg-color: #fffbf0;
+  --primary: #00ff9f;      /* Hijau Neon */
+  --secondary: #ffea00;    /* Kuning Mentega */
+  --accent: #ff006e;       /* Pink Terang */
+  --dark: #000000;         /* Hitam Pekat */
+  --light: #ffffff;
+  --border-width: 3px;
 }
 
 *{
   box-sizing:border-box;
-  font-family:Arial, Helvetica, sans-serif;
+  font-family:'Courier New', Courier, monospace; /* Font ala mesin tik/kalkulator */
 }
 
 body{
   margin:0;
-  background:var(--bg);
+  /* PATTERN BACKGROUND NEOBRUTALISM (Titik-titik) */
+  background-color: var(--bg-color);
+  background-image: radial-gradient(var(--dark) 1px, transparent 1px);
+  background-size: 20px 20px;
   color:var(--dark);
 }
 
@@ -38,121 +44,206 @@ body{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  margin-bottom:15px;
+  margin-bottom:25px;
+  padding:15px;
+  background:var(--light);
+  border: var(--border-width) solid var(--dark);
+  box-shadow: 5px 5px 0px var(--dark);
 }
 
 .header h1{
   margin:0;
-  font-size:28px;
+  font-size:32px;
+  text-transform:uppercase;
+  letter-spacing:2px;
+  text-shadow: 2px 2px 0px rgba(0,0,0,0.2);
 }
 
 .logout-btn{
   width:auto;
-  padding:8px 14px;
-  font-size:12px;
-  background:#dc3545;
+  padding:10px 20px;
+  font-size:14px;
+  background:var(--accent);
+  color:var(--light);
+  text-transform:uppercase;
+  font-weight:bold;
+  border: var(--border-width) solid var(--dark);
+  box-shadow: 3px 3px 0px var(--dark);
+  transition:0.1s;
+}
+
+.logout-btn:hover{
+  transform:translate(1px, 1px);
+  box-shadow: 2px 2px 0px var(--dark);
+}
+
+.logout-btn:active{
+  transform:translate(3px, 3px);
+  box-shadow: 0px 0px 0px var(--dark);
 }
 
 /* GRID UTAMA */
 .grid{
   display:grid;
   grid-template-columns:2fr 1fr;
-  gap:15px;
+  gap:20px;
 }
 
 /* GRID PRODUK */
 .menu-grid{
   display:grid;
-  grid-template-columns:repeat(auto-fill, minmax(140px, 1fr));
-  gap:12px;
+  grid-template-columns:repeat(auto-fill, minmax(160px, 1fr));
+  gap:15px;
   align-items:start;
 }
 
-/* CARD */
+/* CARD - GAYA NEOBRUTALISM */
 .card{
   background:var(--light);
-  border:2px solid var(--dark);
-  padding:10px;
+  border: var(--border-width) solid var(--dark);
+  padding:15px;
   text-align:center;
   display:flex;
   flex-direction:column;
   justify-content:space-between;
-  border-radius:10px;
+  box-shadow: 6px 6px 0px var(--dark);
   transition:0.2s;
 }
 
 .card:hover{
-  transform:scale(1.02);
+  transform:translate(-2px, -2px);
+  box-shadow: 8px 8px 0px var(--dark);
 }
 
 /* GAMBAR */
 .card img{
   width:100%;
-  height:100px;
+  height:120px;
   object-fit:cover;
-  border:2px solid var(--dark);
-  border-radius:6px;
-  margin-bottom:6px;
+  border: var(--border-width) solid var(--dark);
+  border-radius:8px;
+  margin-bottom:10px;
+  background:#eee;
 }
 
 /* TEXT */
 .card h4{
-  font-size:13px;
-  margin:4px 0;
+  font-size:14px;
+  margin:5px 0;
+  font-weight:900;
+  text-transform:uppercase;
+  line-height:1.2;
 }
 
 .card p{
-  font-size:12px;
-  margin:2px 0;
+  font-size:14px;
+  margin:5px 0;
+  font-weight:bold;
+  background:var(--secondary);
+  display:inline-block;
+  padding:2px 8px;
+  border:2px solid var(--dark);
 }
 
-/* BUTTON */
+/* BUTTON - GAYA NEOBRUTALISM */
 button{
   width:100%;
   background:var(--primary);
-  color:#fff;
-  border:2px solid var(--dark);
-  padding:6px;
-  font-size:12px;
-  font-weight:bold;
+  color:var(--dark);
+  border: var(--border-width) solid var(--dark);
+  padding:10px;
+  font-size:14px;
+  font-weight:900;
+  text-transform:uppercase;
   cursor:pointer;
-  margin-top:6px;
-  border-radius:6px;
+  margin-top:10px;
+  box-shadow: 4px 4px 0px var(--dark);
+  transition:0.1s;
+}
+
+button:hover{
+  filter: brightness(1.1);
+}
+
+button:active{
+  transform:translate(3px, 3px);
+  box-shadow: 1px 1px 0px var(--dark);
 }
 
 /* CART */
 .cart{
-  background:#fff;
-  padding:12px;
-  border:2px solid var(--dark);
-  position:sticky;
-  top:20px;
-  border-radius:10px;
+  background:var(--light);
+  padding:20px;
+  border: var(--border-width) solid var(--dark);
+  border-radius:12px;
+  box-shadow: 6px 6px 0px var(--dark);
+  
+  /* LOGIC TETAP DIPERTAHANKAN */
+  position:relative;
+  height:auto;
+  max-height:75vh;
+  overflow-y:auto;
 }
+
+/* SCROLLBAR CUSTOM */
+.cart::-webkit-scrollbar{
+  width:10px;
+}
+.cart::-webkit-scrollbar-track{
+  background:var(--light);
+  border:2px solid var(--dark);
+}
+.cart::-webkit-scrollbar-thumb{
+  background:var(--dark);
+  border:2px solid var(--light);
+  border-radius:10px;
+} 
 
 /* INPUT */
 input{
   width:100%;
-  padding:6px;
-  border:2px solid var(--dark);
-  margin-top:5px;
-  border-radius:5px;
+  padding:10px;
+  border: var(--border-width) solid var(--dark);
+  margin-top:8px;
+  border-radius:6px;
+  font-weight:bold;
+  background:var(--light);
+  font-family:inherit;
 }
 
-/* STATUS */
+input:focus{
+  outline:none;
+  background:var(--secondary);
+}
+
+/* STATUS BADGE */
 .status-badge{
   display:inline-block;
-  padding:3px 8px;
-  color:#fff;
+  padding:5px 10px;
+  color:var(--dark);
   font-size:11px;
-  border:2px solid var(--dark);
-  border-radius:6px;
+  font-weight:900;
+  text-transform:uppercase;
+  border: var(--border-width) solid var(--dark);
+  box-shadow: 3px 3px 0px var(--dark);
+  transform: rotate(-2deg); /* Efek miring */
 }
 
 hr{
   border:none;
-  border-top:2px solid var(--dark);
-  margin:10px 0;
+  border-top: var(--border-width) solid var(--dark);
+  margin:15px 0;
+}
+
+/* JUDUL DAFTAR PESANAN */
+h2{
+  text-transform:uppercase;
+  border-bottom: var(--border-width) solid var(--dark);
+  padding-bottom:10px;
+  background: var(--secondary);
+  display:inline-block;
+  padding-right:20px;
+  box-shadow: 4px 4px 0px var(--dark);
 }
 </style>
 </head>
@@ -182,8 +273,8 @@ hr{
 @if($menu->gambar)
 <img src="{{ asset('storage/'.$menu->gambar) }}">
 @else
-<div style="height:100px;background:#eee;display:flex;align-items:center;justify-content:center;border:2px solid var(--dark);border-radius:6px;">
-Tidak ada
+<div style="height:120px;background:#eee;display:flex;align-items:center;justify-content:center;border:var(--border-width) solid var(--dark);border-radius:6px;font-weight:bold;">
+NO IMG
 </div>
 @endif
 
@@ -214,7 +305,7 @@ Tidak ada
 
 <h2>📋 Daftar Pesanan</h2>
 
-<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:15px;">
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px;">
 
 @foreach($pesanans as $psn)
 
@@ -222,32 +313,31 @@ Tidak ada
 
 <!-- HEADER -->
 <div style="display:flex;justify-content:space-between;align-items:center;">
-<b>#{{ $psn->kode_pesanan }}</b>
+<b style="font-size:16px;">#{{ $psn->kode_pesanan }}</b>
 
 <span class="status-badge" style="
 background:
 {{ 
- $psn->status == 'menunggu' ? '#6c757d' :
-($psn->status == 'pending_payment' ? '#f4d35e' :
-($psn->status == 'dibayar' ? '#7ca36a' :
-'black'))
+ $psn->status == 'menunggu' ? '#adb5bd' :
+($psn->status == 'pending_payment' ? 'var(--secondary)' :
+($psn->status == 'dibayar' ? 'var(--primary)' :
+'var(--accent)'))
 }};
-font-size:10px;
 ">
 {{ $psn->status }}
 </span>
 </div>
 
-<div style="font-size:12px;margin:6px 0;">
-Meja: <b>{{ $psn->nomor_meja }}</b> | {{ $psn->nama_pelanggan }}
+<div style="font-size:13px;margin:10px 0;font-weight:bold;">
+Meja: {{ $psn->nomor_meja }} | {{ $psn->nama_pelanggan }}
 </div>
 
 <hr>
 
 <!-- DETAIL -->
-<div style="font-size:12px;max-height:90px;overflow:auto;">
+<div style="font-size:13px;max-height:100px;overflow:auto;border:2px solid #eee;padding:5px;">
 @foreach($psn->detail as $d)
-<div style="display:flex;justify-content:space-between;">
+<div style="display:flex;justify-content:space-between;margin-bottom:4px;">
 <span>{{ $d->produk->nama_produk }} x{{ $d->qty }}</span>
 <span>Rp {{ number_format($d->subtotal) }}</span>
 </div>
@@ -257,13 +347,13 @@ Meja: <b>{{ $psn->nomor_meja }}</b> | {{ $psn->nama_pelanggan }}
 <hr>
 
 <!-- TOTAL -->
-<div style="display:flex;justify-content:space-between;font-weight:bold;">
-<span>Total</span>
+<div style="display:flex;justify-content:space-between;font-weight:900;font-size:16px;margin:5px 0;">
+<span>TOTAL</span>
 <span>Rp {{ number_format($psn->total_harga) }}</span>
 </div>
 
 <!-- BUTTON -->
-<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;">
+<div style="margin-top:15px;display:flex;gap:8px;flex-wrap:wrap;">
 
 @if($psn->status == 'menunggu')
 
@@ -280,7 +370,7 @@ Meja: <b>{{ $psn->nomor_meja }}</b> | {{ $psn->nama_pelanggan }}
 
 <form method="POST" action="{{ route('cashier.bayar',$psn->id) }}">
 @csrf
-<input type="number" name="bayar" placeholder="Bayar">
+<input type="number" name="bayar" placeholder="Jumlah Bayar">
 <button>Bayar</button>
 </form>
 
@@ -302,11 +392,11 @@ Meja: <b>{{ $psn->nomor_meja }}</b> | {{ $psn->nama_pelanggan }}
 </form>
 
 <a href="{{ route('struk',$psn->id) }}" target="_blank" style="width:100%;">
-<button type="button" style="background:var(--secondary);color:#000;">Cetak</button>
+<button type="button" style="background:var(--accent);color:var(--light);">Cetak</button>
 </a>
 
 @else
-<span>✔️ Selesai</span>
+<span style="background:var(--secondary);padding:5px 10px;border:2px solid var(--dark);font-weight:bold;">✔️ Selesai</span>
 @endif
 
 </div>
@@ -320,24 +410,59 @@ Meja: <b>{{ $psn->nomor_meja }}</b> | {{ $psn->nama_pelanggan }}
 <script>
 function updateCart(id, type){
  fetch("{{ route('cashier.cart.update') }}", {
-  method:"POST",
+  method:"PUT",
   headers:{
    "X-CSRF-TOKEN":document.querySelector('meta[name="csrf-token"]').content,
-   "Content-Type":"application/json"
+   "Content-Type":"application/json",
+   "Accept":"application/json"
   },
-  body:JSON.stringify({produk_id:id,type:type})
- }).then(()=>location.reload());
+  body:JSON.stringify({
+    produk_id:id,
+    type:type
+  })
+ })
+ .then(async res => {
+    let text = await res.text();
+
+    try {
+        let data = JSON.parse(text);
+        console.log("JSON:", data);
+        location.reload();
+    } catch(e){
+        console.error("❌ BUKAN JSON:");
+        console.log(text);
+    }
+ })
+ .catch(err => console.error("Fetch error:", err));
 }
+
 
 function deleteCart(id){
  fetch("{{ route('cashier.cart.delete') }}", {
   method:"POST",
   headers:{
    "X-CSRF-TOKEN":document.querySelector('meta[name="csrf-token"]').content,
-   "Content-Type":"application/json"
+   "Content-Type":"application/json",
+   "Accept":"application/json"
   },
   body:JSON.stringify({produk_id:id})
- }).then(()=>location.reload());
+ })
+ .then(async res => {
+   if(!res.ok){
+     const text = await res.text();
+     console.error("ERROR RESPONSE:", text);
+     throw new Error("Server Error");
+   }
+   return res.json();
+ })
+ .then(data => {
+   if(data.success){
+     location.reload();
+   }
+ })
+ .catch(err => {
+   console.error("Fetch error:", err);
+ });
 }
 </script>
 

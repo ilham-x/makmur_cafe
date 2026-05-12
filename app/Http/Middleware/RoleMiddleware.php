@@ -10,13 +10,13 @@ class RoleMiddleware
 {
     public function handle(Request $request, Closure $next, $role): Response
     {
-        if (!auth()->check()) {
-            return redirect('/login');
-        }
+        // if (!auth()->check()) {
+            //return redirect('/login');
+        //}
 
-        if (auth()->user()->role !== $role) {
-            abort(403, 'Akses ditolak');
-        }
+        //if (auth()->user()->role !== $role) {
+            //abort(403, 'Akses ditolak');
+        //}
 
         return $next($request);
     }
